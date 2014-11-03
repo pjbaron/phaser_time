@@ -31,6 +31,8 @@ function create() {
 	gui.add(this.game.time, "slowMotion", 1, 16);
 	gui.add(this, "wasteTime", 0, 10, 1);
 	gui.add(this.game.time, "desiredFps", 10, 60, 5);
+
+	this.game.fpsProblemNotifier.add(handleFpsProblem, this);
 }
 
 
@@ -64,8 +66,10 @@ function render() {
 
 	if (game.time.suggestedFps !== null)
 		game.debug.text('suggested FPS: ' + game.time.suggestedFps, 2, 28, "#00ff00");
+	game.debug.text('desired FPS: ' + game.time.desiredFps, 2, 42, "#00ff00");
 
 }
+
 
 function startFall(_sprite) {
 
@@ -73,12 +77,20 @@ function startFall(_sprite) {
 
 }
 
+
 function bounceTween(_sprite) {
 
 	game.add.tween(_sprite).to({y:100}, 500, Phaser.Easing.Quadratic.InOut, true).onComplete.addOnce(startFall, this);
 
 }
 
+
+function handleFpsProblem() {
+
+	// modify the game desired fps to match the current suggested fps
+	game.time.desiredFps = game.time.suggestedFps;
+
+}
 
 
 
