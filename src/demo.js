@@ -1,12 +1,11 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
-var ballMovement = null;
-var ballTween = null;
 
 function preload() {
 
     game.load.image('ball', '../img/sphere3.png');
 }
+
 
 function create() {
 
@@ -22,9 +21,14 @@ function create() {
 	this.ballTween.anchor.set(0.5);
 	startFall(this.ballTween);
 
+    this.emitter = game.add.emitter(game.world.centerX, 200, 200);
+    this.emitter.makeParticles('ball');
+    this.emitter.start(false, 5000, 20);	
+
 	var gui = new dat.GUI();
 	gui.add(this.game.time, "slowMotion", 1, 16);
 }
+
 
 function update() {
 
@@ -40,6 +44,7 @@ function update() {
 	}
 
 }
+
 
 function render() {
 
