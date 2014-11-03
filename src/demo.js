@@ -23,10 +23,13 @@ function create() {
 
     this.emitter = game.add.emitter(game.world.centerX, 200, 200);
     this.emitter.makeParticles('ball');
-    this.emitter.start(false, 5000, 20);	
+    this.emitter.start(false, 5000, 20);
+
+    this.wasteTime = 0;
 
 	var gui = new dat.GUI();
 	gui.add(this.game.time, "slowMotion", 1, 16);
+	gui.add(this, "wasteTime", 0, 10000);
 }
 
 
@@ -43,6 +46,14 @@ function update() {
 		this.ballMovement.vy++;
 	}
 
+	// mess with the refresh rate by wasting a ton of cpu time
+	// (emulates running on lower-powered devices)
+	var r = 0;
+	for(var i = 0; i < this.wasteTime * 1000; i++)
+	{
+		var a = Math.sqrt(i);
+		r += a * a;
+	}
 }
 
 
