@@ -11,7 +11,7 @@ function create() {
 
 	game.time.advancedTiming = true;
     game.time.desiredFps = 60;
-    game.time.slowMotion = 8.0;
+    game.time.slowMotion = 1.0;
 
 	this.ballMovement = game.add.sprite(100, 100, 'ball');
 	this.ballMovement.anchor.set(0.5);
@@ -29,7 +29,8 @@ function create() {
 
 	var gui = new dat.GUI();
 	gui.add(this.game.time, "slowMotion", 1, 16);
-	gui.add(this, "wasteTime", 0, 10000);
+	gui.add(this, "wasteTime", 0, 10, 1);
+	gui.add(this.game.time, "desiredFps", 10, 60, 5);
 }
 
 
@@ -47,9 +48,9 @@ function update() {
 	}
 
 	// mess with the refresh rate by wasting a ton of cpu time
-	// (emulates running on lower-powered devices)
+	// (emulates running on lower CPU-powered devices)
 	var r = 0;
-	for(var i = 0; i < this.wasteTime * 1000; i++)
+	for(var i = 0; i < this.wasteTime * 100000; i++)
 	{
 		var a = Math.sqrt(i);
 		r += a * a;
@@ -60,6 +61,9 @@ function update() {
 function render() {
 
 	game.debug.text('render FPS: ' + (game.time.fps || '--') , 2, 14, "#00ff00");
+
+	if (game.time.suggestedFps !== null)
+		game.debug.text('suggested FPS: ' + game.time.suggestedFps, 2, 28, "#00ff00");
 
 }
 
