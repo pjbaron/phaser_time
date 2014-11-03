@@ -28,9 +28,9 @@ function create() {
     this.wasteTime = 0;
 
 	var gui = new dat.GUI();
-	gui.add(this.game.time, "slowMotion", 1, 16);
-	gui.add(this, "wasteTime", 0, 10, 1);
-	gui.add(this.game.time, "desiredFps", 10, 60, 5);
+	gui.add(this.game.time, "slowMotion", 1, 16).step(1);
+	gui.add(this, "wasteTime", 0, 10).step(1);
+	gui.add(this.game.time, "desiredFps", 10, 60).step(5);
 
 	this.game.fpsProblemNotifier.add(handleFpsProblem, this);
 }
@@ -51,11 +51,11 @@ function update() {
 
 	// mess with the refresh rate by wasting a ton of cpu time
 	// (emulates running on lower CPU-powered devices)
-	var r = 0;
-	for(var i = 0; i < this.wasteTime * 100000; i++)
+	this.r = 0;
+	for(var i = 0; i < this.wasteTime * 500000; i++)
 	{
 		var a = Math.sqrt(i);
-		r += a * a;
+		this.r += a * a;
 	}
 }
 
