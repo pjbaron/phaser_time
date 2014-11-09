@@ -29,10 +29,13 @@ function create() {
 
 	var gui = new dat.GUI();
 	gui.add(this.game.time, "slowMotion", 1, 16).step(1);
-	gui.add(this, "wasteTime", 0, 10).step(1);
+	gui.add(this, "wasteTime", 0, 100).step(1);
 	gui.add(this.game.time, "desiredFps", 10, 60).step(5);
 
 	this.game.fpsProblemNotifier.add(handleFpsProblem, this);
+	this.fpsx = 0;
+	this.fpsRecord = [];
+	this.lastTime = game.time.now;
 }
 
 
@@ -52,7 +55,7 @@ function update() {
 	// mess with the refresh rate by wasting a ton of cpu time
 	// (emulates running on lower CPU-powered devices)
 	this.r = 0;
-	for(var i = 0; i < this.wasteTime * 500000; i++)
+	for(var i = 0; i < this.wasteTime * 1000000; i++)
 	{
 		var a = Math.sqrt(i);
 		this.r += a * a;
@@ -68,6 +71,15 @@ function render() {
 		game.debug.text('suggested FPS: ' + game.time.suggestedFps, 2, 28, "#00ff00");
 	game.debug.text('desired FPS: ' + game.time.desiredFps, 2, 42, "#00ff00");
 
+	this.fpsx++;
+	if (this.fpsx > 640) this.fpsx = 0;
+	var elapsed = game.time.now - this.lastTime;
+	this.lastTime = game.time.now;
+	this.fpsRecord[this.fpsx] = elapsed;
+	for(var i = 0; i < this.fpsRecord.length; i++)
+		game.debug.pixel(i, this.fpsRecord[i] + 100, 0xffffff);
+
+	game.debug.text(this.r, 2, 1000);		// make sure the wasteTime calculations can't be optimised away
 }
 
 
@@ -88,7 +100,7 @@ function bounceTween(_sprite) {
 function handleFpsProblem() {
 
 	// modify the game desired fps to match the current suggested fps
-	game.time.desiredFps = game.time.suggestedFps;
+//	game.time.desiredFps = game.time.suggestedFps;
 
 }
 
