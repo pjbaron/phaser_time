@@ -36,6 +36,13 @@ function create() {
 	this.fpsx = 0;
 	this.fpsRecord = [];
 	this.lastTime = game.time.now;
+
+	if (game.raf)
+	{
+		game.raf.stop();
+		game.raf.forceSetTimeOut = true;
+		game.raf.start();
+	}
 }
 
 
