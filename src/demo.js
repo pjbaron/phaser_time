@@ -13,17 +13,23 @@ function create() {
     game.time.desiredFps = 60;
     game.time.slowMotion = 1.0;
 
+    this.balls = game.add.group();
+
 	this.ballMovement = game.add.sprite(100, 100, 'ball');
 	this.ballMovement.anchor.set(0.5);
 	this.ballMovement.vy = 0;
+	game.physics.arcade.enable([this.ballMovement]);
+
+	this.balls.add(this.ballMovement);
 
 	this.ballTween = game.add.sprite(150, 100, 'ball');
 	this.ballTween.anchor.set(0.5);
+
 	startFall(this.ballTween);
 
     this.emitter = game.add.emitter(game.world.centerX, 200, 200);
-    this.emitter.makeParticles('ball');
-    this.emitter.start(false, 5000, 20);
+    this.emitter.makeParticles('ball', 0, 30, true, true);
+    this.emitter.start(false, 8000, 30);
 
     this.wasteTime = 0;
 
@@ -37,16 +43,33 @@ function create() {
 	this.fpsRecord = [];
 	this.lastTime = game.time.now;
 
-	if (game.raf)
-	{
-		game.raf.stop();
-		game.raf.forceSetTimeOut = true;
-		game.raf.start();
-	}
+	this.lftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+	this.rgtKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+
+	// if (game.raf)
+	// {
+	// 	game.raf.stop();
+	// 	game.raf.forceSetTimeOut = true;
+	// 	game.raf.start();
+	// }
 }
 
 
 function update() {
+
+	if (this.lftKey.justDown)
+		this.ballMovement.x -= 40;
+	
+	if (this.rgtKey.justDown)
+		this.ballMovement.x += 40;
+	
+
+	var underPtr = game.physics.arcade.getObjectsUnderPointer(game.input.mousePointer, this.balls);
+	if (underPtr && underPtr.length > 0)
+		console.log("underPtr = ", underPtr.length);
+	var underLoc = game.physics.arcade.getObjectsAtLocation(game.input.x, game.input.y, this.balls);
+	if (underLoc && underLoc.length > 0)
+		console.log("underLoc = ", underLoc.length);
 
 	this.ballMovement.y += this.ballMovement.vy;
 	
@@ -58,6 +81,8 @@ function update() {
 	{
 		this.ballMovement.vy++;
 	}
+
+	game.physics.arcade.collide(this.emitter);
 
 	// mess with the refresh rate by wasting a ton of cpu time
 	// (emulates running on lower CPU-powered devices)
